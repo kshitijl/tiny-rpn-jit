@@ -28,10 +28,25 @@ int push_number(int number, char *m) {
     return i;
 }
 
+int add(char *m) {
+    int i = 0;
+    m[i++] = 0x58; // pop %rax
+
+    m[i++] = 0x59; // pop %rcx
+
+    m[i++] = 0x48;
+    m[i++] = 0x01;
+    m[i++] = 0xc8; // add %rcx, %rax
+
+    m[i++] = 0x50; // push %rax
+
+    return i;
+}    
+
 int return_top_of_stack(char *m) {
     int i = 0;
-    m[i++] = 0x58;
-    m[i++] = 0xc3;
+    m[i++] = 0x58; // pop %rax
+    m[i++] = 0xc3; // ret
 }
 
 int main() {
@@ -39,6 +54,8 @@ int main() {
     char * original_m = m;
     
     m += push_number(200, m);
+    m += push_number(124, m);
+    m += add(m);
     m += return_top_of_stack(m);
 
     int (*func)(void);
